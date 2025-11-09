@@ -32,7 +32,23 @@ async function run() {
    
       await client.connect();
       const db = client.db("PlateShare_DB");
-      const foodsCollection = db.collection("Foods")
+      const foodsCollection = db.collection("Foods");
+      const userCollection = db.collection("Users")
+
+      //users get method
+      app.get("/users", async (req, res) => {
+          const result = await userCollection.find().toArray();
+          res.send(result);
+      })
+
+       //users get method
+      app.post("/user", async (req, res) => {
+          const newUser = req.body;
+          const result = await userCollection.insertOne(newUser);
+          res.send(result);
+      })
+
+
 
       //Foods Get Method
       app.get("/foods", async (req, res) => {
@@ -44,7 +60,6 @@ async function run() {
       app.get("/feature-foods", async (req, res) => {
           const foods = await foodsCollection.find().toArray();
           const result = foods.map((food) => ({ ...food, numericQuantity: parseInt(food.quantity.match(/\d+/)) || 0 })).sort((a, b) => b.numericQuantity - a.numericQuantity).slice(0, 6);
-
           res.send(result);
       })
 
