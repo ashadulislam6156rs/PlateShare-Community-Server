@@ -40,6 +40,22 @@ async function run() {
           res.send(result);
       })
 
+      //Feature Foods Get Method 
+      app.get("/feature-foods", async (req, res) => {
+          const foods = await foodsCollection.find().toArray();
+          const result = foods.map((food) => ({ ...food, numericQuantity: parseInt(food.quantity.match(/\d+/)) || 0 })).sort((a, b) => b.numericQuantity - a.numericQuantity).slice(0, 6);
+
+          res.send(result);
+      })
+
+      //Feature Foods Get Method 
+      app.get("/feature-foods", async (req, res) => {
+          const foods = await foodsCollection.find().toArray();
+          const result = foods.map((food) => ({ ...food, numericQuantity: parseInt(food.quantity.match(/\d+/)) || 0 })).sort((a, b) => b.numericQuantity - a.numericQuantity).slice(0, 6);
+          
+          res.send(result);
+      })
+
       //Foods Post Method
       app.post("/foods", async (req, res) => {
           const newFood = req.body;
