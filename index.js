@@ -56,11 +56,13 @@ async function run() {
       })
 
       //FoodDetails Get Method 
-      app.get("/FoodDetails/:id ", async (req, res) => {
-          const query = {status: "Available"}
-          const result = await foodsCollection.find(query).toArray();
+      app.get("/food/foodDetails/:id", async (req, res) => {
+          const id = req.params.id;
+          const query = {_id: new ObjectId(id)}
+          const result = await foodsCollection.findOne(query)
           res.send(result);
       })
+
 
       //Foods Post Method
       app.post("/foods", async (req, res) => {
