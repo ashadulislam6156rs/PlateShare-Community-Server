@@ -6,7 +6,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
-uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ojq4cou.mongodb.net/?appName=Cluster0`
+uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ojq4cou.mongodb.net/?appName=Cluster0`;
 
 //middelware
 app.use(cors());
@@ -60,6 +60,26 @@ async function run() {
           const id = req.params.id;
           const query = {_id: new ObjectId(id)}
           const result = await foodsCollection.findOne(query)
+          res.send(result);
+      })
+
+       // Update-food Patch Method 
+      app.patch("/update-food/:id", async (req, res) => {
+          const id = req.params.id;
+          const updateData = req.body;
+          const query = { _id: new ObjectId(id) }
+          const update = {
+              $set: {
+                  foodName: updateData.foodName,
+                  foodImage: updateData.foodImage,
+                  quantity: updateData.quantity,
+                  expireDate: updateData.expireDate,
+                  pickupTimeWindow: updateData.pickupTimeWindow,
+                  pickupLocation: updateData.pickupLocation,
+                  status: updateData.status,
+              }
+          }
+          const result = await foodsCollection.updateOne(query,update)
           res.send(result);
       })
 
