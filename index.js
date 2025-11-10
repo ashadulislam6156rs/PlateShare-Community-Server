@@ -33,20 +33,30 @@ async function run() {
       await client.connect();
       const db = client.db("PlateShare_DB");
       const foodsCollection = db.collection("Foods");
-      const userCollection = db.collection("Users")
+      const userCollection = db.collection("Users");
+      const foodRequestCollection = db.collection("FoodRequest");
 
-      //users get method
-      app.get("/users", async (req, res) => {
-          const result = await userCollection.find().toArray();
+      //Food reguest get method
+      
+       //Food reguest Post method
+      app.post("/foodRequest", async (req, res) => {
+          const newFoodRequest = req.body;
+          const result = await foodRequestCollection.insertOne(newFoodRequest);
           res.send(result);
       })
 
-       //users get method
-      app.post("/user", async (req, res) => {
-          const newUser = req.body;
-          const result = await userCollection.insertOne(newUser);
-          res.send(result);
-      })
+    //   //users get method
+    //   app.get("/users", async (req, res) => {
+    //       const result = await userCollection.find().toArray();
+    //       res.send(result);
+    //   })
+
+    //    //users get method
+    //   app.post("/user", async (req, res) => {
+    //       const newUser = req.body;
+    //       const result = await userCollection.insertOne(newUser);
+    //       res.send(result);
+    //   })
 
 
 
@@ -76,6 +86,20 @@ async function run() {
           const query = {_id: new ObjectId(id)}
           const result = await foodsCollection.findOne(query)
           res.send(result);
+      })
+
+      //ManageMyFoods get method
+
+      app.get("/manageMyFoods", async (req, res) => {
+          const email = req.query.email;
+        //   console.log(email);
+          const query = {}
+          if (email) {
+              query["provider.email"] = email
+          }
+          const result = await foodsCollection.find(query).toArray();
+          res.send(result)
+          
       })
 
        // Update-food Patch Method 
