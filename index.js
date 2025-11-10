@@ -37,13 +37,33 @@ async function run() {
       const foodRequestCollection = db.collection("FoodRequest");
 
       //Food reguest get method
-      
+
        //Food reguest Post method
       app.post("/foodRequest", async (req, res) => {
           const newFoodRequest = req.body;
           const result = await foodRequestCollection.insertOne(newFoodRequest);
           res.send(result);
       })
+
+       //Food reguest get method
+      app.get("/foodRequest", async (req, res) => {
+          const result = await foodRequestCollection.find().toArray();
+          res.send(result);
+      })
+
+      //spacific user Food reguest get method
+      app.get("/myfoodRequest", async (req, res) => {
+          const email = req.query.email;
+          const query = {}
+          if (email) {
+              query.userEmail = email;
+          }
+          const result = await foodRequestCollection.find(query).toArray();
+          res.send(result)
+          
+      })
+
+    
 
     //   //users get method
     //   app.get("/users", async (req, res) => {
@@ -89,10 +109,8 @@ async function run() {
       })
 
       //ManageMyFoods get method
-
       app.get("/manageMyFoods", async (req, res) => {
           const email = req.query.email;
-        //   console.log(email);
           const query = {}
           if (email) {
               query["provider.email"] = email
@@ -102,7 +120,8 @@ async function run() {
           
       })
 
-       // Update-food Patch Method 
+      // Update-food Patch Method 
+        //foodName,foodImage,quantity,description,cookedTime,expireDate,pickupTimeWindow,pickupLocation,locationType,packagingType,status
       app.patch("/update-food/:id", async (req, res) => {
           const id = req.params.id;
           const updateData = req.body;
@@ -116,11 +135,25 @@ async function run() {
                   pickupTimeWindow: updateData.pickupTimeWindow,
                   pickupLocation: updateData.pickupLocation,
                   status: updateData.status,
+                  description: updateData.description,
+                  cookedTime: updateData.cookedTime,
+                  locationType: updateData.locationType,
+                  packagingType: updateData.packagingType
               }
           }
           const result = await foodsCollection.updateOne(query,update)
           res.send(result);
       })
+
+       // Update-food get Method 
+
+      app.get("/update-food/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await foodsCollection.findOne(query);
+  res.send(result);
+});
+
 
 
       //Foods Post Method
