@@ -63,21 +63,35 @@ async function run() {
           
       })
 
-    
 
-    //   //users get method
-    //   app.get("/users", async (req, res) => {
-    //       const result = await userCollection.find().toArray();
-    //       res.send(result);
-    //   })
+       //Foods statusUpdate patch Method
+      app.patch("/foods/statusUpdate/:id", async (req, res) => {
+          const id = req.params.id;
+          const updateData = req.body;
+          const query = { _id: new ObjectId(id) };
+          const updateProperty = {
+              $set: {
+                status: updateData.status
+              }
+          }
+           const result = await foodsCollection.updateOne(query,updateProperty)
+          res.send(result);
+      })
 
-    //    //users get method
-    //   app.post("/user", async (req, res) => {
-    //       const newUser = req.body;
-    //       const result = await userCollection.insertOne(newUser);
-    //       res.send(result);
-    //   })
-
+      //foodRequest statusUpdate patch Method
+      app.patch("/foodRequest/statusUpdate/:id", async (req, res) => {
+           const id = req.params.id;
+          const updateData = req.body;
+          const query = { _id: new ObjectId(id) };
+          const updateProperty = {
+              $set: {
+                status: updateData.status
+              }
+          }
+           const result = await foodRequestCollection.updateOne(query,updateProperty)
+          res.send(result);
+          
+      })
 
 
       //Foods Get Method
@@ -121,7 +135,6 @@ async function run() {
       })
 
       // Update-food Patch Method 
-        //foodName,foodImage,quantity,description,cookedTime,expireDate,pickupTimeWindow,pickupLocation,locationType,packagingType,status
       app.patch("/update-food/:id", async (req, res) => {
           const id = req.params.id;
           const updateData = req.body;
@@ -145,8 +158,16 @@ async function run() {
           res.send(result);
       })
 
-       // Update-food get Method 
 
+      // myFoods Delete Method
+      app.delete("/deleteMyFood/:id", async (req, res) => {
+          const id = req.params.id;
+          const query = { _id: new ObjectId(id) }
+          const result = await foodsCollection.deleteOne(query);
+          res.send(result);
+      })
+
+       // Update-food get Method 
       app.get("/update-food/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
@@ -163,6 +184,10 @@ async function run() {
           res.send(result);
           
       })
+
+       
+
+      
 
     
     await client.db("admin").command({ ping: 1 });
