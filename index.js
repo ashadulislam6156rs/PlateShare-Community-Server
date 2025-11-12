@@ -33,23 +33,33 @@ async function run() {
       await client.connect();
       const db = client.db("PlateShare_DB");
       const foodsCollection = db.collection("Foods");
-      const userCollection = db.collection("Users");
+    //   const userCollection = db.collection("Users");
       const foodRequestCollection = db.collection("FoodRequest");
 
-      //Food reguest get method
+      //Food request get method
 
-       //Food reguest Post method
+       //Food request Post method
       app.post("/foodRequest", async (req, res) => {
           const newFoodRequest = req.body;
           const result = await foodRequestCollection.insertOne(newFoodRequest);
           res.send(result);
       })
 
-       //Food reguest get method
+       //Food request get method
       app.get("/foodRequest", async (req, res) => {
           const result = await foodRequestCollection.find().toArray();
           res.send(result);
       })
+
+    //   Spacific Food All request get method
+      app.get("/foodRequest/:id", async (req, res) => {
+          const id = req.params.id;
+          const query = { foodId: id }
+          const result = await foodRequestCollection.find(query).toArray();
+          res.send(result)
+      })
+
+   
 
       //spacific user Food reguest get method
       app.get("/myfoodRequest", async (req, res) => {
@@ -78,7 +88,7 @@ async function run() {
           res.send(result);
       })
 
-      //foodRequest statusUpdate patch Method
+    //   foodRequest statusUpdate patch Method
       app.patch("/foodRequest/statusUpdate/:id", async (req, res) => {
            const id = req.params.id;
           const updateData = req.body;
@@ -151,7 +161,9 @@ async function run() {
                   description: updateData.description,
                   cookedTime: updateData.cookedTime,
                   locationType: updateData.locationType,
-                  packagingType: updateData.packagingType
+                  packagingType: updateData.packagingType,
+                  "provider.name": updateData.provider?.name,
+                  "provider.provider_image": updateData.provider?.provider_image,
               }
           }
           const result = await foodsCollection.updateOne(query,update)
