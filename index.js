@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 
 uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ojq4cou.mongodb.net/?appName=Cluster0`;
 
-//middelware
+//middleware
 app.use(cors());
 app.use(express.json());
 
@@ -30,13 +30,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
    
-      await client.connect();
+    //   await client.connect();
       const db = client.db("PlateShare_DB");
       const foodsCollection = db.collection("Foods");
     //   const userCollection = db.collection("Users");
       const foodRequestCollection = db.collection("FoodRequest");
 
-      //Food request get method
+     
 
        //Food request Post method
       app.post("/foodRequest", async (req, res) => {
@@ -202,7 +202,7 @@ async function run() {
       
 
     
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
