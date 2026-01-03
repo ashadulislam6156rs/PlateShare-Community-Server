@@ -200,12 +200,78 @@ async function run() {
           res.send(result);
       })
 
-      //Available Foods Get Method 
-      app.get("/available-foods", async (req, res) => {
-          const query = {status: "Available"}
-          const result = await foodsCollection.find(query).toArray();
-          res.send(result);
-      })
+      //Available Foods Get Method
+      // app.get("/available-foods", async (req, res) => {
+      //     const query = {status: "Available"}
+      //     const result = await foodsCollection.find(query).toArray();
+      //     res.send(result);
+    // })
+    
+    app.get("/available-foods", async (req, res) => {
+  try {
+    const {
+      search,
+      pickupLocation,
+      minQuantity,
+      minRating,
+      page = 1,
+      limit = 6,
+    } = req.query;
+
+    const query = { status: "Available" };
+
+    /* 🔍 Search by foodName OR pickupLocation */
+    if (search) {
+      query.$or = [
+        { foodName: { $regex: search, $options: "i" } },
+        { pickupLocation: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    /* 📍 Filter pickupLocation */
+    if (pickupLocation) {
+      query.pickupLocation = { $regex: pickupLocation, $options: "i" };
+    }
+
+    /* 🍽️ Filter minimum quantity */
+    if (minQuantity) {
+      query.quantity = { $gte: Number(minQuantity) };
+    }
+
+    /* ⭐ Filter minimum rating */
+    if (minRating) {
+      query.rating = { $gte: Number(minRating) };
+    }
+
+    /* 📄 Pagination / Infinite Scroll */
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const foods = await foodsCollection
+      .find(query)
+      .skip(skip)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 }) // latest first
+      .toArray();
+
+    const total = await foodsCollection.countDocuments(query);
+
+    res.send({
+      success: true,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+      totalPages: Math.ceil(total / limit),
+      foods,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Failed to fetch available foods",
+      error: error.message,
+    });
+  }
+});
+
 
       //FoodDetails Get Method 
       app.get("/food/foodDetails/:id", async (req, res) => {
