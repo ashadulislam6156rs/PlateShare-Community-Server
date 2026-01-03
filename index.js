@@ -33,9 +33,33 @@ async function run() {
     //   await client.connect();
       const db = client.db("PlateShare_DB");
       const foodsCollection = db.collection("Foods");
-    //   const userCollection = db.collection("Users");
+      const usersCollection = db.collection("Users");
       const foodRequestCollection = db.collection("FoodRequest");
 
+    
+    // =======> user related Api's
+
+     app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      const email = req.body.email;
+      const isExist = await usersCollection.findOne({ email });
+
+      if (isExist) {
+        return res.send({ message: "User Alredy Exist!" });
+      } 
+       newUser.createdAt = new Date();
+       newUser.userRole = "User";
+        const result = await usersCollection.insertOne(newUser);
+        res.send({ message: "User added successfully", insertedId: result.insertedId });
+      
+    })
+
+
+    app.get("/users", async (req, res) => {
+    const result = await usersCollection.find().sort({createdAt: -1}).toArray();
+    return res.send(result); 
+      
+    })
      
 
        //Food request Post method
