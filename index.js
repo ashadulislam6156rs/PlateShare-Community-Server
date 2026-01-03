@@ -54,7 +54,16 @@ async function run() {
       
     })
 
+    app.get("/users/role", async (req, res) => {
+      const email = req.query.email;
+      const query = {email}
+    const result = await usersCollection.findOne(query);
+    return res.send(result); 
+      
+    })
 
+
+//Admin
     app.get("/users", async (req, res) => {
     const result = await usersCollection.find().sort({createdAt: -1}).toArray();
     return res.send(result); 
