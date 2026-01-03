@@ -62,13 +62,81 @@ async function run() {
       
     })
 
+    // Update User Profile
+ app.patch("/user/:id/update", async (req, res) => {
+
+       const id = req.params.id;
+       const { fullName, photoURL, userRole, address} = req.body;
+       const query = { _id: new ObjectId(id) }
+
+       if (!userRole) {
+         const updateInfo = {
+         $set: {
+         fullName,
+         photoURL,
+         contactNumber,
+         address,
+         }
+       }
+
+     const result = await usersCollection.updateOne(query, updateInfo);
+         res.send(result);
+         
+       }
+
+       if (!address) {
+        const updateInfo = {
+         $set: {
+           fullName,
+         photoURL,
+         contactNumber,
+         userRole,
+         }
+       }
+
+      const result = await usersCollection.updateOne(query, updateInfo);
+      res.send(result);
+      }
+       
+      
+     })
+
 
 //Admin
     app.get("/users", async (req, res) => {
+      const email = req.query.email;
+      const query = {email}
+      if (!email) {
     const result = await usersCollection.find().sort({createdAt: -1}).toArray();
+    return res.send(result); 
+      }
+      const result = await usersCollection.findOne(query);
     return res.send(result); 
       
     })
+
+     app.delete("/user/:id/delete", async (req, res) => {
+    const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+      
+    })
+     app.patch("/user/role/:id/update", async (req, res) => {
+     const id = req.params.id;
+       const { userRole} = req.body;
+       const query = { _id: new ObjectId(id) }
+       const updateInfo = {
+         $set: {
+         userRole
+         }
+       }
+      const result = await usersCollection.updateOne(query, updateInfo);
+      res.send(result);
+      
+     })
+    
+    
      
 
        //Food request Post method
