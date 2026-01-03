@@ -66,38 +66,20 @@ async function run() {
  app.patch("/user/:id/update", async (req, res) => {
 
        const id = req.params.id;
-       const { fullName, photoURL, userRole, address} = req.body;
+       const { fullName, photoURL, address} = req.body;
        const query = { _id: new ObjectId(id) }
 
-       if (!userRole) {
-         const updateInfo = {
-         $set: {
-         fullName,
-         photoURL,
-         contactNumber,
-         address,
-         }
-       }
-
-     const result = await usersCollection.updateOne(query, updateInfo);
-         res.send(result);
-         
-       }
-
-       if (!address) {
-        const updateInfo = {
-         $set: {
-           fullName,
-         photoURL,
-         contactNumber,
-         userRole,
-         }
-       }
+   const updateInfo = {
+     $set: {
+       fullName,
+       photoURL,
+       address,
+     }
+        
+   }
 
       const result = await usersCollection.updateOne(query, updateInfo);
       res.send(result);
-      }
-       
       
      })
 
